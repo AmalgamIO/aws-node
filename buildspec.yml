@@ -1,0 +1,51 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18.x
+    commands:
+      - echo "Installing dependencies"
+      - npm install
+      - pip install --user aws-sam-cli  # Ensure AWS SAM CLI is available
+
+  build:
+    commands:
+      - echo "Running tests and type checks"
+      - npm run build --if-present
+      - echo "Packaging Lambda function..."
+
+      - echo "Installing Lambdas..."
+      - cd lambda/init_session && npm install
+      - echo "Installing React/JS..."
+      - cd ../../s3/www && npm install
+      - echo "Installing AWS SAM CLI..."
+      - pip install aws-sam-cli
+      - echo "Creating S3 bucket for artifacts..."
+
+      - sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket my-lambda-store-for-pipeline
+
+  post_build:
+    commands:
+      - echo "Deploying Lambda function using SAM..."
+      - sam deploy --template-file packaged.yaml --stack-name MyLambdaStack --capabilities CAPABILITY_IAM
+      - echo "Generating appspec.yml for CodeDeploy"
+      - |
+        cat <<EOT > appspec.yml
+        version: 0.0
+        Resources:
+          - MyLambdaFunction:
+              Type: AWS::Lambda::Function
+              Properties:
+                Name: MyLambdaFunction
+                Alias: live
+                CurrentVersion: 1
+                TargetVersion: 2
+        EOT
+
+artifacts:
+  files:
+    - packaged.yaml
+    - appspec.yml
+
+
