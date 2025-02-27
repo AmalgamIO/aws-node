@@ -37,7 +37,7 @@ phases:
               Properties:
                 Name: MyLambdaFunction
                 Alias: live
-                CurrentVersion: $CURRENT_VERSION
+                CurrentVersion: $TARGET_VERSION
                 TargetVersion: $TARGET_VERSION
         EOT
 
