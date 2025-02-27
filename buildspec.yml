@@ -18,11 +18,9 @@ phases:
       - cd ..
       - echo "Running SAM package to generate packaged template..."
       - sam package --region us-west-2 --s3-prefix lambdas --template-file template.yaml --s3-bucket my-lambda-store-for-pipeline --use-json > packaged.json
-
       - echo "Extracting CodeUri from packaged.json..."
       - CODE_URI=$(cat packaged.json | python3 -c "import sys, json; print(json.load(sys.stdin)['Resources']['MyLambdaFunction']['Properties']['CodeUri'])")
-
-      - echo "CodeUri found: $CODE_URI"
+      - echo "CodeUri is ${CODE_URI}"
 
 artifacts:
   files:
