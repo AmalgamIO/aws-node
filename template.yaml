@@ -8,14 +8,14 @@ Resources:
       FunctionName: MyLambdaFunction
       Runtime: nodejs18.x
       Handler: index.handler
-      CodeUri: ./dist/  # Path to the code (built in the pipeline)
+      CodeUri: ./dist/  # Ensure lambda.zip is stored here
       MemorySize: 128
       Timeout: 10
       Role: arn:aws:iam::009072398085:role/MyLambdaBasicExecutionRole
-      AutoPublishAlias: live  # Required for CodeDeploy deployments
-
+      AutoPublishAlias: live  # ✅ This ensures aliasing and versioning
 
 Outputs:
   MyLambdaFunctionArn:
     Value: !Ref MyLambdaFunction
-
+  MyLambdaFunctionVersion:
+    Value: !GetAtt MyLambdaFunction.Version
