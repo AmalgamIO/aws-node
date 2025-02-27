@@ -6,6 +6,7 @@ phases:
       nodejs: 18.x
     commands:
       - npm install
+      - pip install --user aws-sam-cli  # Ensure AWS SAM is installed
       - pip install --user awscli jq  # Install AWS CLI and jq for JSON parsing
 
   build:
@@ -13,14 +14,11 @@ phases:
       - echo "Building Lambda function..."
       - npm run build --if-present
       - echo "Packaging Lambda function..."
-      - mkdir -p dist
-      - cp -r index.js node_modules package.json package-lock.json dist/
       - cd dist
-      - zip -r lambda.zip .  
+      - zip -r lambda.zip .
       - cd ..
-
       - echo "Running SAM package to generate packaged template..."
-      - sam package --region us-west-2 --s3-prefix lambda1 --template-file template.yaml --s3-bucket my-lambda-store-for-pipeline --use-json > packaged.json
+      - sam package --region us-west-2 --s3-prefix lambdas --template-file template.yaml --s3-bucket my-lambda-store-for-pipeline --use-json > packaged.json
 
       - echo "Extracting CodeUri from packaged.json..."
       - CODE_URI=$(jq -r '.Resources.MyLambdaFunction.Properties.CodeUri' packaged.json)
