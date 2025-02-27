@@ -17,5 +17,3 @@ Resources:
 Outputs:
   MyLambdaFunctionArn:
     Value: !Ref MyLambdaFunction
-  MyLambdaFunctionVersion:
-    Value: !GetAtt MyLambdaFunction.Version
